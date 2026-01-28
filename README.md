@@ -1,0 +1,1 @@
+# proj_wakayama_omi_pedigree_analysis
