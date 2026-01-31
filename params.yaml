@@ -1,0 +1,8 @@
+
+# Output
+outdir: "results"
+
+# Trimmomatic
+trim_adapters : null
+trim_threads: 4
+trim_extra: ""

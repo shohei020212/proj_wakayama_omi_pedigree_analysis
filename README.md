@@ -15,6 +15,7 @@ This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-
 ## Requirements
 - Nextflow
 - Docker
+- Java (version 17 or later)
 
 > Note: Docker execution in Nextflow is controlled by settings such as `docker.enabled`.
 
@@ -34,9 +35,9 @@ $ cd REPO_NAME
 Create samplesheet.csv:
 
 ```bash
-sample,fastq_1,fastq_2
-S1,data/S1_R1.fastq.gz,data/S1_R2.fastq.gz
-S2,data/S2_R1.fastq.gz,data/S2_R2.fastq.gz
+sample,fastq1,fastq2
+n1,data/n1.1.fq.gz,data/n1.2.fq.gz
+n2,data/n2.1.fq.gz,data/n2.2.fq.gz
 ```
 
 
@@ -45,10 +46,13 @@ S2,data/S2_R1.fastq.gz,data/S2_R2.fastq.gz
 Create samplesheet.csv:
 
 ```bash
-$ nextflow run main.nf -profile docker \
+$ nextflow run main.nf \
+    -profile docker \
+    -params-file params.yaml \
     --input samplesheet.csv \
     --fasta resources/reference.fa \
-    --outdir results
+    --outdir results \
+    --trim_adapters resources/adapters.fa
 ```
 
 ## Pipeline steps
