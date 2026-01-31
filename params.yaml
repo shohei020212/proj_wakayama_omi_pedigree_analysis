@@ -4,5 +4,14 @@ outdir: "results"
 
 # Trimmomatic
 trim_adapters : null
-trim_threads: 4
+trim_threads: 6
 trim_extra: ""
+
+# BWA-MEM
+bwa_threads: 6
+bwa_mem: "8 GB"
+bwa_time: "1h"
+
+# SAMTOOLS
+samtools_Q: 30
+samtools_F: 256

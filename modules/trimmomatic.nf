@@ -15,8 +15,8 @@ process TRIMMOMATIC {
   output:
 
   tuple val(sample),
-        path("${sample}.R1.paired.fq.gz"),
-        path("${sample}.R2.paired.fq.gz"),
+        path("${sample}.R1.trimmed.fq.gz"),
+        path("${sample}.R2.trimmed.fq.gz"),
         emit: reads
 
   script:
@@ -25,12 +25,15 @@ process TRIMMOMATIC {
   """
   trimmomatic PE -threads ${task.cpus} \
     ${r1} ${r2} \
-    ${sample}.R1.paired.fq.gz \
+    ${sample}.R1.trimmed.fq.gz \
     ${sample}.R1.unpaired.fq.gz \
-    ${sample}.R2.paired.fq.gz \
+    ${sample}.R2.trimmed.fq.gz \
     ${sample}.R2.unpaired.fq.gz \
     ${adapterPart} \
-    SLIDINGWINDOW:4:20 MINLEN:100 \
+    LEADING:20 \
+    TRAILING:20 \
+    SLIDINGWINDOW:4:20 \
+    MINLEN:100 \
     ${params.trim_extra}
   """
 }

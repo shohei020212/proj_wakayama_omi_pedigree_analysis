@@ -26,8 +26,8 @@ This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-
 ### 1. Clone
 
 ```bash
-$ git clone https://github.com:shohei020212/proj_wakayama_omi_pedigree_analysis.git
-$ cd proj_wakayama_omi_pedigree_analysis
+git clone https://github.com:shohei020212/proj_wakayama_omi_pedigree_analysis.git
+cd proj_wakayama_omi_pedigree_analysis
 ```
 
 ###  2. Prepare inputs
@@ -46,7 +46,7 @@ n2,data/n2.1.fq.gz,data/n2.2.fq.gz
 Create samplesheet.csv:
 
 ```bash
-$ nextflow run main.nf \
+nextflow run main.nf \
     -profile docker \
     -params-file params.yaml \
     --input samplesheet.csv \
@@ -59,24 +59,24 @@ $ nextflow run main.nf \
 
 - Read QC (FastQC / MultiQC)
 - Adapter trimming (Trimmomatic)
-- Alignment to reference (e.g., BWA-MEM)
-- Sorting / indexing (e.g., samtools)
-- Variant calling (e.g., bcftools / GATK)
-- Variant filtering (QUAL/DP/MAF, etc.)
+- Alignment to reference (BWA-MEM)
+- Sorting / indexing (SAMtools)
+- Variant calling (bcftools)
+- Variant filtering (VCFtools)
 
 ## Summary statistics / reports
 
 ### Inputs
-Minimum required:
-```--input```: Path to a samplesheet CSV.
-```--fasta```: Reference genome FASTA.
-```--outdir```: Output directory.
+Minimum required:  
+```--input```: Path to a samplesheet CSV.  
+```--fasta```: Reference genome FASTA.  
+```--outdir```: Output directory.  
 
-Optional (examples):
-```--trim_adapters```: Adapter fasta file.
-```--gff```: Genome annotation (GFF/GTF).
-```--bed```: Target regions.
-```--known_sites```: Known variant sites for recalibration steps.
+Optional:  
+```--trim_adapters```: Adapter fasta file.    
+```--gff```: Genome annotation (GFF/GTF).  
+```--bed```: Target regions.  
+```--known_sites```: Known variant sites for recalibration steps.  
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).
