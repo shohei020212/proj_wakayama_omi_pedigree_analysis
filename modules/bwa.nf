@@ -7,7 +7,7 @@ process BWA {
   publishDir "${params.outdir}/alignment", mode: 'symlink'
 
   cpus params.bwa_threads ? params.bwa_threads as int : 8
-  memory params.bwa_mem ? params.bwa_mem : '8 GB'
+  memory params.bwa_mem ? params.bwa_mem : '16 GB'
   time params.bwa_time ? params.bwa_time : '8h'
 
   input:

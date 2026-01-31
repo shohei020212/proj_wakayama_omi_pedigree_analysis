@@ -79,12 +79,12 @@ Optional:
 ```--known_sites```: Known variant sites for recalibration steps.  
 
 ### Outputs
-All outputs are written under `--outdir` (default: `results/`).
-Example output layout:
-`results/fastqc/`: QC reports
-`results/trim/`: trimmed FASTQ
-`results/alignment/`: SAM/BAM (+ index)
-`results/pipeline_info/`: resource-usage reports
+All outputs are written under `--outdir` (default: `results/`).  
+Example output layout:  
+`results/fastqc/`: QC reports  
+`results/trim/`: trimmed FASTQ  
+`results/alignment/`: SAM/BAM (+ index)  
+`results/pipeline_info/`: resource-usage reports  
 
 ### Configuration profiles
 Nextflow supports profiles (sets of configuration options) that can be selected at runtime using -profile.

@@ -28,6 +28,9 @@ process SAMTOOLS {
     -@ ${task.cpus} \
     -o ${sample}_sorted.bam
 
+  # index the sorted BAM
+  samtools index -@ ${task.cpus} ${sample}_sorted.bam
+
   # generate flagstats
   samtools flagstat -@ ${task.cpus} ${sample}_sorted.bam > ${sample}_filtered_flagstats.txt
   samtools flagstat -@ ${task.cpus} ${sample}.sam > ${sample}_unfiltered_flagstats.txt

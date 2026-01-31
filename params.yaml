@@ -9,8 +9,8 @@ trim_extra: ""
 
 # BWA-MEM
 bwa_threads: 6
-bwa_mem: "8 GB"
-bwa_time: "1h"
+bwa_mem: "16 GB"
+bwa_time: "8h"
 
 # SAMTOOLS
 samtools_Q: 30
