@@ -1,9 +1,9 @@
 # proj_wakayama_omi_pedigree_analysis
 
-One-line description (e.g., A reproducible SNP calling and filtering pipeline using Nextflow and Docker).
+A reproducible SNP calling and filtering pipeline using Nextflow and Docker.
 
 ## Overview
-This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → summary) in a reproducible manner. The pipeline is designed to run locally or on HPC/cloud by switching Nextflow configuration profiles. [web:9][web:26]
+This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → summary) in a reproducible manner. The pipeline is designed to run locally by switching Nextflow configuration profiles.
 
 ## Key features
 - Workflow automation with Nextflow (restartable runs, scalable execution via profiles).
@@ -26,8 +26,8 @@ This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-
 ### 1. Clone
 
 ```bash
-$ git clone https://github.com/USER/REPO_NAME.git
-$ cd REPO_NAME
+$ git clone https://github.com:shohei020212/proj_wakayama_omi_pedigree_analysis.git
+$ cd proj_wakayama_omi_pedigree_analysis
 ```
 
 ###  2. Prepare inputs
@@ -57,7 +57,8 @@ $ nextflow run main.nf \
 
 ## Pipeline steps
 
-- Read QC (e.g., FastQC / fastp)
+- Read QC (FastQC / MultiQC)
+- Adapter trimming (Trimmomatic)
 - Alignment to reference (e.g., BWA-MEM)
 - Sorting / indexing (e.g., samtools)
 - Variant calling (e.g., bcftools / GATK)
@@ -72,18 +73,18 @@ Minimum required:
 ```--outdir```: Output directory.
 
 Optional (examples):
+```--trim_adapters```: Adapter fasta file.
 ```--gff```: Genome annotation (GFF/GTF).
 ```--bed```: Target regions.
 ```--known_sites```: Known variant sites for recalibration steps.
 
 ### Outputs
-All outputs are written under --outdir (default: results/).
+All outputs are written under `--outdir` (default: `results/`).
 Example output layout:
-results/qc/: QC reports
-results/alignment/: BAM/CRAM (+ index)
-results/variants/: Raw and filtered VCF/BCF
-results/logs/: Process logs, pipeline logs
-results/pipeline_info/: Execution metadata (versions/params, if implemented)
+`results/fastqc/`: QC reports
+`results/trim/`: trimmed FASTQ
+`results/alignment/`: SAM/BAM (+ index)
+`results/pipeline_info/`: resource-usage reports
 
 ### Configuration profiles
 Nextflow supports profiles (sets of configuration options) that can be selected at runtime using -profile.
@@ -91,4 +92,6 @@ Nextflow supports profiles (sets of configuration options) that can be selected 
 Typical profiles (examples):
 standard: Local execution (no containers)
 docker: Docker-enabled execution
-slurm / sge / pbs: HPC schedulers (if provided)
+
+### Resource-usage reports
+The pipeline automatically generates resource-usage reports after each run. These files are written to `results/pipeline_info/` and include a per-task execution trace (`trace.tsv`) as well as HTML summaries (`report.html` and `timeline.html`) that help you review CPU, memory, and runtime usage for each process.
