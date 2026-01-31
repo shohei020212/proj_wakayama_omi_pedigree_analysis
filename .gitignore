@@ -1,5 +1,6 @@
 data/
 resources/
+results/
 work/
 .nextflow/
 .nextflow.log*
