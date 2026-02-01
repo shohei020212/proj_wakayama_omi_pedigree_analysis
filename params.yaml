@@ -21,3 +21,12 @@ bcftools_threads: 6
 bcftools_mem: "16 GB"
 bcftools_time: "8h"
 
+# VCFtools
+vcftools_min_alleles: 2
+vcftools_max_alleles: 2
+vcftools_min_meanDP: 10
+vcftools_ind_max_miss: 0.1
+vcftools_site_max_miss: 0.1
+
+# Genotype quality checks
+ad_plot_max_points: 0

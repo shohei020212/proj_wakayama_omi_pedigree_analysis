@@ -53,7 +53,8 @@ nextflow run main.nf \
     --fasta resources/reference.fa \
     --outdir results \
     --trim_adapters resources/adapters.fa \
-    --regions resources/target_regions.bed
+    --regions resources/target_regions.bed \
+    --known_sites resources/target_snplist.tsv
 ```
 
 ## Pipeline steps
@@ -76,7 +77,7 @@ Minimum required:
 Optional:  
 ```--trim_adapters```: Adapter fasta file.   
 ```--regions```: Target region list (BED format: chr/start/end).   
-```--known_sites```: Known variant sites.  
+```--known_sites```: Known variant sites (TSV; chr/pos).   
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).  
@@ -86,7 +87,8 @@ Example output layout:
 `results/alignment/`: SAM/BAM (+ index)  
 `results/multiqc/`: FASTQC summary  
 `results/multiqc_flagstat`: Alignment QC summary  
-`results/variants`: Called variants (VCF)  
+`results/variants`: Raw and filtered variants (VCF)  
+`results/genotype_qc`: Genotype quality check based on allele counts (PNG)  
 `results/pipeline_info/`: resource-usage reports  
 
 ### Configuration profiles
@@ -98,3 +100,5 @@ docker: Docker-enabled execution
 
 ### Resource-usage reports
 The pipeline automatically generates resource-usage reports after each run. These files are written to `results/pipeline_info/` and include a per-task execution trace (`trace.tsv`) as well as HTML summaries (`report.html` and `timeline.html`) that help you review CPU, memory, and runtime usage for each process.
+
+

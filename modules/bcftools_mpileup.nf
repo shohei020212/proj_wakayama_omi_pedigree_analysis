@@ -2,7 +2,7 @@
 
 nextflow.enable.dsl = 2
 
-process BCFTOOLS_MPILEUP_CALL {
+process BCFTOOLS_MPILEUP {
     tag "bcftools_joint_call"
     publishDir "${params.outdir}/variants", mode: 'copy'
 
@@ -16,9 +16,9 @@ process BCFTOOLS_MPILEUP_CALL {
     path regions_bed
 
     output:
-    path "vars.vcf.gz"
+    path "vars.vcf.gz", emit: vcf_gz
     path "vars.vcf.gz.csi"
-    
+
     script:
     def regionOpt = regions_bed ? "-R ${regions_bed}" : ""
     """
@@ -39,6 +39,23 @@ process BCFTOOLS_MPILEUP_CALL {
     --threads ${task.cpus}
 
     # index the VCF file
+    bcftools index -f vars.vcf.gz || true
+
+    # Create renamed VCF to have simple sample names
+    bcftools query -l vars.vcf.gz \
+    | awk 'BEGIN{FS=OFS="\\t"}{
+        old=\$0; new=\$0;
+        sub(".*/","",new);              # delete path
+        sub("\\\\.(bam|cram)\$","",new); # delete extension
+        sub("([._-])sorted\$","",new);    # delete suffix "sorted"
+        print old, new
+        }' > sample_rename.tsv
+
+    # reheader the VCF
+    bcftools reheader -s sample_rename.tsv -o vars.renamed.vcf.gz vars.vcf.gz
+    mv vars.renamed.vcf.gz vars.vcf.gz
+
+    # index the renamed VCF file
     bcftools index -f vars.vcf.gz || true
     """
 }

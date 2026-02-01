@@ -12,7 +12,10 @@ include { BWA_INDEX               } from './modules/bwa_index'
 include { BWA                     } from './modules/bwa'
 include { SAMTOOLS_VIEW_SORT      } from './modules/samtools'
 include { MULTIQC_FLAGSTAT        } from './modules/multiqc_flagstat'
-include { BCFTOOLS_MPILEUP_CALL   } from './modules/bcftools'
+include { BCFTOOLS_MPILEUP        } from './modules/bcftools_mpileup'
+include { VCFTOOLS_FILTER_QC      } from './modules/vcftools_filter_qc'
+include { EXTRACT_AD_GT           } from './modules/extract_ad_gt'
+include { PLOT_AD_SCATTER         } from './modules/plot_ad_scatter'
 
 workflow {
 
@@ -79,6 +82,14 @@ workflow {
     // Optional regions BED file
     ch_regions = channel.value( file(params.regions, checkIfExists: true) )
     
-    BCFTOOLS_MPILEUP_CALL(ch_bamlist, ch_ref, ch_regions)
+    BCFTOOLS_MPILEUP(ch_bamlist, ch_ref, ch_regions)
 
+    // 8) VCF filtering and QC metrics with VCFTOOLS
+    //    Optional known_sites file
+    ch_knownsites = channel.value( file(params.known_sites, checkIfExists: true) )
+    VCFTOOLS_FILTER_QC(BCFTOOLS_MPILEUP.out.vcf_gz, ch_knownsites)
+
+    // 9) Extract AD and GT from filtered VCF and plot AD scatter
+    EXTRACT_AD_GT(VCFTOOLS_FILTER_QC.out.filtered_vcf)
+    PLOT_AD_SCATTER(EXTRACT_AD_GT.out.ad_gt_tsv)
 }
