@@ -2,7 +2,7 @@
 
 nextflow.enable.dsl = 2
 
-process SAMTOOLS {
+process SAMTOOLS_VIEW_SORT {
   tag "$sample"
   publishDir "${params.outdir}/alignment", mode: 'symlink'
 

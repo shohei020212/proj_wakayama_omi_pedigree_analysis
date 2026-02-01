@@ -10,15 +10,16 @@ include { TRIMMOMATIC             } from './modules/trimmomatic'
 include { MULTIQC                 } from './modules/multiqc'
 include { BWA_INDEX               } from './modules/bwa_index'
 include { BWA                     } from './modules/bwa'
-include { SAMTOOLS                } from './modules/samtools'
+include { SAMTOOLS_VIEW_SORT      } from './modules/samtools'
 include { MULTIQC_FLAGSTAT        } from './modules/multiqc_flagstat'
+include { BCFTOOLS_MPILEUP_CALL   } from './modules/bcftools'
 
 workflow {
 
     // Check params
     if( !params.input ) error "Missing required parameter: --input (or set input in -params-file)"
     if( !params.fasta ) error "Missing required parameter: --fasta (or set fasta in -params-file)"
-
+    
     def samplesheet = file(params.input)
     def ref_fasta   = file(params.fasta)
 
@@ -60,18 +61,24 @@ workflow {
     BWA(TRIMMOMATIC.out.reads, BWA_INDEX.out.ref_and_index)
 
     // 5) SAM to sorted BAM with SAMTOOLS
-    SAMTOOLS(BWA.out.sam)
+    SAMTOOLS_VIEW_SORT(BWA.out.sam)
     
     // 6) Summarize flagstats with MultiQC
-    ch_flagstats =  SAMTOOLS.out.flagstats_filtered
-        .mix(SAMTOOLS.out.flagstats_unfiltered)
+    ch_flagstats =  SAMTOOLS_VIEW_SORT.out.flagstats_filtered
+        .mix(SAMTOOLS_VIEW_SORT.out.flagstats_unfiltered)
         .map { _sample, txt -> txt }
         .collect()
     
     MULTIQC_FLAGSTAT(ch_flagstats)
     
-    // 
-
-    // End of workflow
+    // 7) Variant calling with BCFTOOLS mpileup + call
+    //    Create a BAM list file for bcftools mpileup input
+    ch_bamlist = SAMTOOLS_VIEW_SORT.out.bam
+        .map { _sample, bam -> bam.toString() }
+        .collectFile(name: 'bamlist.txt', newLine: true)
+    // Optional regions BED file
+    ch_regions = channel.value( file(params.regions, checkIfExists: true) )
+    
+    BCFTOOLS_MPILEUP_CALL(ch_bamlist, ch_ref, ch_regions)
 
 }

@@ -52,7 +52,8 @@ nextflow run main.nf \
     --input samplesheet.csv \
     --fasta resources/reference.fa \
     --outdir results \
-    --trim_adapters resources/adapters.fa
+    --trim_adapters resources/adapters.fa \
+    --regions resources/target_regions.bed
 ```
 
 ## Pipeline steps
@@ -73,10 +74,9 @@ Minimum required:
 ```--outdir```: Output directory.  
 
 Optional:  
-```--trim_adapters```: Adapter fasta file.    
-```--gff```: Genome annotation (GFF/GTF).  
-```--bed```: Target regions.  
-```--known_sites```: Known variant sites for recalibration steps.  
+```--trim_adapters```: Adapter fasta file.   
+```--regions```: Target region list (BED format: chr/start/end).   
+```--known_sites```: Known variant sites.  
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).  
@@ -84,6 +84,9 @@ Example output layout:
 `results/fastqc/`: QC reports  
 `results/trim/`: trimmed FASTQ  
 `results/alignment/`: SAM/BAM (+ index)  
+`results/multiqc/`: FASTQC summary  
+`results/multiqc_flagstat`: Alignment QC summary  
+`results/variants`: Called variants (VCF)  
 `results/pipeline_info/`: resource-usage reports  
 
 ### Configuration profiles

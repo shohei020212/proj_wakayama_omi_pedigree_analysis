@@ -12,6 +12,12 @@ bwa_threads: 6
 bwa_mem: "16 GB"
 bwa_time: "8h"
 
-# SAMTOOLS
+# SAMtools
 samtools_Q: 30
 samtools_F: 256
+
+# BCFtools
+bcftools_threads: 6
+bcftools_mem: "16 GB"
+bcftools_time: "8h"
+
