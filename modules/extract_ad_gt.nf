@@ -14,11 +14,10 @@ process EXTRACT_AD_GT {
 
     script:
     """
-    set -euo pipefail
-
-    # Output columns: CHROM POS REF ALT SAMPLE GT AD
-    bcftools query \
-    -f '%CHROM\\t%POS\\t%REF\\t%ALT\\t[%SAMPLE\\t%GT\\t%AD\\n]' \
-    ${filer_vcf} > ad_gt.tsv
-"""
+    # output header
+    echo -e "CHROM\tPOS\tREF\tALT\tSample\tGT\tAD" > ad_gt.tsv
+    
+    # append CHROM POS REF ALT SAMPLE GT AD for all samples
+    bcftools query -f '[%CHROM\\t%POS\\t%REF\\t%ALT\\t%SAMPLE\\t%GT\\t%AD\\n]' ${filer_vcf} >> ad_gt.tsv
+    """
 }

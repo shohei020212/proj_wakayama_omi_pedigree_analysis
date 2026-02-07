@@ -4,11 +4,11 @@ outdir: "results"
 
 # Trimmomatic
 trim_adapters : null
-trim_threads: 6
+trim_threads: 8
 trim_extra: ""
 
 # BWA-MEM
-bwa_threads: 6
+bwa_threads: 8
 bwa_mem: "16 GB"
 bwa_time: "8h"
 
@@ -17,7 +17,7 @@ samtools_Q: 30
 samtools_F: 256
 
 # BCFtools
-bcftools_threads: 6
+bcftools_threads: 8
 bcftools_mem: "16 GB"
 bcftools_time: "8h"
 
