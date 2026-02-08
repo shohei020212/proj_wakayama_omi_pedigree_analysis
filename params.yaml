@@ -1,6 +1,17 @@
+# Parameters configuration file for the pedigree analysis pipeline
+
+# If you do not specify regions, set it to NO_FILE.
+regions: "${projectDir}/resources/NO_FILE"
+# If you do not specify known_sites, set it to NO_FILE.
+known_sites: "${projectDir}/resources/NO_FILE"
+# If you do not specify life_history_file, set it to NO_FILE.
+lh_file: "${projectDir}/resources/NO_FILE"
 
 # Output
 outdir: "results"
+
+# Variant caller
+caller: "bcftools" # Option: bcftools, freebayes, gatk
 
 # Trimmomatic
 trim_threads: 8
@@ -19,6 +30,16 @@ samtools_F: 256
 bcftools_threads: 8
 bcftools_mem: "16 GB"
 bcftools_time: "8h"
+
+# GATK
+gatk_threads: 8
+gatk_mem: "16 GB"
+gatk_time: "8h"
+
+# FreeBayes
+freebayes_threads: 8
+freebayes_mem: "16 GB"
+freebayes_time: "8h"
 
 # VCFtools
 vcftools_min_alleles: 2

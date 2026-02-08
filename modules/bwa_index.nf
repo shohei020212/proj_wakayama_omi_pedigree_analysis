@@ -14,6 +14,7 @@ process BWA_INDEX {
 
   script:
   """
+  samtools faidx ${ref_fasta}
   bwa index ${ref_fasta}
   """
 }

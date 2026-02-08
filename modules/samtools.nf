@@ -17,13 +17,19 @@ process SAMTOOLS_VIEW_SORT {
 
   script:
   """
+  # add read group information to BAM
+  samtools addreplacerg \
+        -r '@RG\\tID:${sample}\\tSM:${sample}\\tPL:ILLUMINA\\tLB:lib1' \
+        -o ${sample}.rg.bam \
+        ${sam}
+  
   # run samtools to convert SAM to filtered BAM + sort
   samtools view \
     -@ ${task.cpus} \
     -q ${params.samtools_Q ?: 0} \
     -F ${params.samtools_F ?: 0} \
     -bS \
-    ${sam} \
+    ${sample}.rg.bam \
     | samtools sort \
     -@ ${task.cpus} \
     -o ${sample}_sorted.bam

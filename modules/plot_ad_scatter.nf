@@ -10,11 +10,11 @@ process PLOT_AD_SCATTER {
     path ad_gt_tsv
 
     output:
-    path "ad_gt_scatter.png"
+    path "${params.caller}_ad_gt_scatter.png"
 
     script:
     """
     # run bin/plot_ad_gt.py to generate scatter plot of AD
-    plot_ad_gt.py --inputs ${ad_gt_tsv} --output ad_gt_scatter.png
+    plot_ad_gt.py --inputs ${ad_gt_tsv} --output ${params.caller}_ad_gt_scatter.png
     """
 }

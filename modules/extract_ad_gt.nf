@@ -10,14 +10,14 @@ process EXTRACT_AD_GT {
     path filer_vcf
 
     output:
-    path "ad_gt.tsv", emit: ad_gt_tsv
+    path "${params.caller}_ad_gt.tsv", emit: ad_gt_tsv
 
     script:
     """
     # output header
-    echo -e "CHROM\tPOS\tREF\tALT\tSample\tGT\tAD" > ad_gt.tsv
+    echo -e "CHROM\tPOS\tREF\tALT\tSample\tGT\tAD" > ${params.caller}_ad_gt.tsv
     
     # append CHROM POS REF ALT SAMPLE GT AD for all samples
-    bcftools query -f '[%CHROM\\t%POS\\t%REF\\t%ALT\\t%SAMPLE\\t%GT\\t%AD\\n]' ${filer_vcf} >> ad_gt.tsv
+    bcftools query -f '[%CHROM\\t%POS\\t%REF\\t%ALT\\t%SAMPLE\\t%GT\\t%AD\\n]' ${filer_vcf} >> ${params.caller}_ad_gt.tsv
     """
 }

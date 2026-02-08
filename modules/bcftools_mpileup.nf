@@ -4,15 +4,16 @@ nextflow.enable.dsl = 2
 
 process BCFTOOLS_MPILEUP {
     tag "bcftools_joint_call"
-    publishDir "${params.outdir}/variants", mode: 'copy'
+    publishDir "${params.outdir}/bcftools", mode: 'copy'
 
-    cpus params.bcftools_threads ? params.bcftools_threads as int : 8
-    memory params.bcftools_mem ? params.bcftools_mem : '16 GB'
-    time params.bcftools_time ? params.bcftools_time : '8h'
+    cpus params.bcftools_threads
+    memory params.bcftools_mem
+    time params.bcftools_time
 
     input:
-    path bam_list
-    path ref_fasta
+    path bams
+    path bais
+    tuple path(ref_fasta), path(ref_index)
     path regions_bed
 
     output:
@@ -26,8 +27,8 @@ process BCFTOOLS_MPILEUP {
 
     # bcftools mpileup and call
     bcftools mpileup \
-    --bam-list ${bam_list} \
     -f ${ref_fasta} \
+    ${bams} \
     ${regionOpt} \
     -O b \
     -a AD,DP,SP \

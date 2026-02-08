@@ -63,7 +63,7 @@ nextflow run main.nf \
 - Adapter trimming (Trimmomatic)
 - Alignment to reference (BWA-MEM)
 - Sorting / indexing (SAMtools)
-- Variant calling (bcftools)
+- Variant calling (bcftools or GATK)
 - Variant filtering (VCFtools)
 
 ## Summary statistics / reports
@@ -76,6 +76,7 @@ Minimum required:
 ```--trim_adapters```: Adapter fasta file.   
 
 Optional:  
+```--caller```: Variant caller (defauls: bcftools, option: gatk and freebayes). 
 ```--regions```: Target region list (BED format: chr/start/end).   
 ```--known_sites```: Known variant sites (TSV; chr/pos).   
 ```--lh_file```: Life-history data(ID, Sex, BirthYear).  
@@ -88,7 +89,8 @@ Example output layout:
 `results/alignment/`: SAM/BAM (+ index)  
 `results/multiqc/`: FASTQC summary  
 `results/multiqc_flagstat`: Alignment QC summary  
-`results/variants`: Raw and filtered variants (VCF)  
+`results/bcftools(gatk or freebayes)`: Raw variants (VCF)  
+`results/vcftools`: Filtered variants (VCF)  
 `results/genotype_qc`: Genotype quality check based on allele counts (PNG)  
 `results/sequoia`: Results of pedigree reconstruction  
 `results/pipeline_info/`: resource-usage reports  

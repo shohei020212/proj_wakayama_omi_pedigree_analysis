@@ -4,7 +4,7 @@ nextflow.enable.dsl = 2
 
 process VCFTOOLS_FILTER_QC {
     tag "vcftools"
-    publishDir "${params.outdir}/variants", mode: 'copy'
+    publishDir "${params.outdir}/vcftools", mode: 'copy'
 
     input:
     path vcf_gz

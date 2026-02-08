@@ -12,7 +12,12 @@ include { BWA_INDEX               } from './modules/bwa_index'
 include { BWA                     } from './modules/bwa'
 include { SAMTOOLS_VIEW_SORT      } from './modules/samtools'
 include { MULTIQC_FLAGSTAT        } from './modules/multiqc_flagstat'
+
+// Variant calling modules
 include { BCFTOOLS_MPILEUP        } from './modules/bcftools_mpileup'
+include { GATK_HC                 } from './modules/gatk_haplotypecaller'
+include { FREEBAYES               } from './modules/freebayes'
+
 include { VCFTOOLS_FILTER_QC      } from './modules/vcftools_filter_qc'
 include { EXTRACT_AD_GT           } from './modules/extract_ad_gt'
 include { PLOT_AD_SCATTER         } from './modules/plot_ad_scatter'
@@ -76,21 +81,54 @@ workflow {
         .collect()
     
     MULTIQC_FLAGSTAT(ch_flagstats)
+
+    // 7) Variant calling
+    // Define channels for vcf output
+    vcf_ch = channel.empty()
+    // Collect BAM and BAI files
+    ch_bam_list =  SAMTOOLS_VIEW_SORT.out.bam
+        .map { _sample, bam -> bam }
+        .collect()
+    ch_bai_list =  SAMTOOLS_VIEW_SORT.out.bai
+        .map { _sample, bai -> bai }
+        .collect()
+
+    ch_bam_list.view()
+    ch_bai_list.view()
     
-    // 7) Variant calling with BCFTOOLS mpileup + call
-    //    Create a BAM list file for bcftools mpileup input
-    ch_bamlist = SAMTOOLS_VIEW_SORT.out.bam
-        .map { _sample, bam -> bam.toString() }
-        .collectFile(name: 'bamlist.txt', newLine: true)
-    // Optional regions BED file
-    ch_regions = channel.value( file(params.regions, checkIfExists: true) )
+    // Variant calling step selection based on params.caller
+    if (params.caller == 'bcftools') {
+        
+        // Optional regions BED file
+        ch_regions = channel.value( file(params.regions, checkIfExists: true) )
+        // Variant calling with BCFTOOLS mpileup + call
+        vcf_ch = BCFTOOLS_MPILEUP(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index, ch_regions).vcf_gz
+        
+    } else if (params.caller == 'gatk') {
+        
+        // Variant calling with GATK HaplotypeCaller
+        vcf_ch = GATK_HC(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
     
-    BCFTOOLS_MPILEUP(ch_bamlist, ch_ref, ch_regions)
+    } else if (params.caller == 'gatk') {
+        
+        // Variant calling with GATK HaplotypeCaller
+        vcf_ch = GATK_HC(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
+    
+    } else if (params.caller == 'freebayes') {
+        
+        // Variant calling with FREEBAYES
+        vcf_ch = FREEBAYES(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
+    
+    } else {
+
+        error "Invalid variant caller specified: ${params.caller}. Please choose from 'bcftools', 'freebayes', or 'gatk'."
+    
+    }
 
     // 8) VCF filtering and QC metrics with VCFTOOLS
     //    Optional known_sites file
     ch_knownsites = channel.value( file(params.known_sites, checkIfExists: true) )
-    VCFTOOLS_FILTER_QC(BCFTOOLS_MPILEUP.out.vcf_gz, ch_knownsites)
+    VCFTOOLS_FILTER_QC(vcf_ch, ch_knownsites)
 
     // 9) Extract AD and GT from filtered VCF and plot AD scatter
     EXTRACT_AD_GT(VCFTOOLS_FILTER_QC.out.filtered_vcf)
