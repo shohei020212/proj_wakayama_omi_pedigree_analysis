@@ -76,10 +76,10 @@ Minimum required:
 ```--trim_adapters```: Adapter fasta file.   
 
 Optional:  
-```--caller```: Variant caller (defauls: bcftools, option: gatk and freebayes). 
+```--caller```: Variant caller (defauls: bcftools, option: gatk and freebayes).  
 ```--regions```: Target region list (BED format: chr/start/end).   
 ```--known_sites```: Known variant sites (TSV; chr/pos).   
-```--lh_file```: Life-history data(ID, Sex, BirthYear).  
+```--lh_file```: Life-history data(ID, Sex, BirthYear, BY.min, BY.max, Year.last).  
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).  

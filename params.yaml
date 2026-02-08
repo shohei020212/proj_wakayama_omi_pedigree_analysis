@@ -45,6 +45,7 @@ freebayes_time: "8h"
 vcftools_min_alleles: 2
 vcftools_max_alleles: 2
 vcftools_min_meanDP: 10
+vcftools_max_meanDP: 300
 vcftools_ind_max_miss: 0.1
 vcftools_site_max_miss: 0.1
 

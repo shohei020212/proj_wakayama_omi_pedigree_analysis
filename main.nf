@@ -135,5 +135,6 @@ workflow {
     PLOT_AD_SCATTER(EXTRACT_AD_GT.out.ad_gt_tsv)
 
     // 10) Pedigree analysis with SEQUOIA
-    SEQUOIA(VCFTOOLS_FILTER_QC.out.filtered_vcf, params.lh_file)
+    ch_lhfile = channel.value( file(params.lh_file, checkIfExists: true) )
+    SEQUOIA(VCFTOOLS_FILTER_QC.out.filtered_vcf, ch_lhfile)
 }

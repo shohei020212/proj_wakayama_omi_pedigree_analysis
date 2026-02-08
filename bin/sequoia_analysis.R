@@ -14,6 +14,7 @@ if (length(args) < 1) {
 vcf_file <- args[1]
 # Check if a second argument exists and is not the placeholder "NO_FILE"
 lh_file  <- if (length(args) > 1 && args[2] != "NO_FILE") args[2] else NULL
+caller_name  <- args[3]
 
 # Load required libraries
 library(sequoia)
@@ -63,16 +64,16 @@ ParOUT <- sequoia(GenoM = GenoM.checked,
 message("Saving results...")
 
 # Save the inferred pedigree
-write.table(ParOUT$Pedigree, file = "Sequoia_Pedigree.txt", 
+write.table(ParOUT$Pedigree, file = paste0("Sequoia_Pedigree_", caller_name, ".txt"), 
             quote = FALSE, row.names = FALSE, sep = "\t")
 
 # Save a summary of the inference
-sink("Sequoia_Summary.txt")
+sink(paste0("Sequoia_Summary_", caller_name, ".txt"))
 SummarySeq(ParOUT)
 sink()
 
 # Save diagnostic plots
-pdf("Sequoia_Diagnostic_Plots.pdf")
+pdf(paste0("Sequoia_Diagnostic_Plots_", caller_name, ".pdf"))
 PlotAgePrior(ParOUT$AgePriors)
 # You can add: PlotRelPairs(ParOUT)
 dev.off()
