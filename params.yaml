@@ -3,7 +3,6 @@
 outdir: "results"
 
 # Trimmomatic
-trim_adapters : null
 trim_threads: 8
 trim_extra: ""
 

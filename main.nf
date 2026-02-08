@@ -16,15 +16,18 @@ include { BCFTOOLS_MPILEUP        } from './modules/bcftools_mpileup'
 include { VCFTOOLS_FILTER_QC      } from './modules/vcftools_filter_qc'
 include { EXTRACT_AD_GT           } from './modules/extract_ad_gt'
 include { PLOT_AD_SCATTER         } from './modules/plot_ad_scatter'
+include { SEQUOIA                 } from './modules/sequoia'
 
 workflow {
 
     // Check params
     if( !params.input ) error "Missing required parameter: --input (or set input in -params-file)"
     if( !params.fasta ) error "Missing required parameter: --fasta (or set fasta in -params-file)"
+    if( !params.trim_adapters ) error "Missing required parameter: --adapter (or set adapter in -params-file)"
     
     def samplesheet = file(params.input)
     def ref_fasta   = file(params.fasta)
+    def adapter     = file(params.trim_adapters)
 
     // Create input channel from the contents of a CSV file
     channel
@@ -44,7 +47,7 @@ workflow {
     FASTQC_RAW(ch_reads)
     
     // 2) Trimming with Trimmomatic
-    ch_adapters = params.trim_adapters ? channel.value(file(params.trim_adapters)) : channel.value(null)
+    ch_adapters = channel.value(adapter)
     TRIMMOMATIC(ch_reads, ch_adapters)
     
     // 3) trimmed FastQC with Trimmomatic output
@@ -92,4 +95,7 @@ workflow {
     // 9) Extract AD and GT from filtered VCF and plot AD scatter
     EXTRACT_AD_GT(VCFTOOLS_FILTER_QC.out.filtered_vcf)
     PLOT_AD_SCATTER(EXTRACT_AD_GT.out.ad_gt_tsv)
+
+    // 10) Pedigree analysis with SEQUOIA
+    SEQUOIA(VCFTOOLS_FILTER_QC.out.filtered_vcf, params.lh_file)
 }

@@ -1,9 +1,9 @@
 # proj_wakayama_omi_pedigree_analysis
 
-A reproducible SNP calling and filtering pipeline using Nextflow and Docker.
+A reproducible SNP calling, filtering and pedigree recontruction pipeline using Nextflow and Docker.
 
 ## Overview
-This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → summary) in a reproducible manner. The pipeline is designed to run locally by switching Nextflow configuration profiles.
+This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → QC → pedigree reconstruction → summary) in a reproducible manner. The pipeline is designed to run locally by switching Nextflow configuration profiles.
 
 ## Key features
 - Workflow automation with Nextflow (restartable runs, scalable execution via profiles).
@@ -73,11 +73,12 @@ Minimum required:
 ```--input```: Path to a samplesheet CSV.  
 ```--fasta```: Reference genome FASTA.  
 ```--outdir```: Output directory.  
+```--trim_adapters```: Adapter fasta file.   
 
 Optional:  
-```--trim_adapters```: Adapter fasta file.   
 ```--regions```: Target region list (BED format: chr/start/end).   
 ```--known_sites```: Known variant sites (TSV; chr/pos).   
+```--lh_file```: Life-history data(ID, Sex, BirthYear).  
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).  
@@ -89,6 +90,7 @@ Example output layout:
 `results/multiqc_flagstat`: Alignment QC summary  
 `results/variants`: Raw and filtered variants (VCF)  
 `results/genotype_qc`: Genotype quality check based on allele counts (PNG)  
+`results/sequoia`: Results of pedigree reconstruction  
 `results/pipeline_info/`: resource-usage reports  
 
 ### Configuration profiles
