@@ -2,10 +2,10 @@
 
 A reproducible SNP calling, filtering and pedigree recontruction pipeline using Nextflow and Docker.
 
-##　🌏 Overview
+## 🌏 Overview
 This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → QC → pedigree reconstruction → summary) in a reproducible manner. The pipeline is designed to run locally by switching Nextflow configuration profiles.
 
-##　🔑 Key features
+## 🔑 Key features
 - Workflow automation with Nextflow (restartable runs, scalable execution via profiles).
 - Containerized execution with Docker to keep tool dependencies consistent across environments.
 - Batch processing via a simple samplesheet (CSV).
