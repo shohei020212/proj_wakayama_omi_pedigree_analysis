@@ -6,8 +6,6 @@ process TRIMMOMATIC {
   tag "$sample"
   publishDir "${params.outdir}/trim", mode: 'copy'
 
-  cpus params.trim_threads as int
-
   input:
   tuple val(sample), path(r1), path(r2)
   path adapters
@@ -28,10 +26,10 @@ process TRIMMOMATIC {
     ${sample}.R2.trimmed.fq.gz \
     ${sample}.R2.unpaired.fq.gz \
     ILLUMINACLIP:${adapters}:2:30:10 \
-    LEADING:20 \
-    TRAILING:20 \
-    SLIDINGWINDOW:4:20 \
-    MINLEN:100 \
+    LEADING:${params.trim_leading} \
+    TRAILING:${params.trim_trailing} \
+    SLIDINGWINDOW:${params.trim_slidingwindow} \
+    MINLEN:${params.trim_minlen} \
     ${params.trim_extra}
   """
 }

@@ -6,10 +6,6 @@ process BCFTOOLS_MPILEUP {
     tag "bcftools_joint_call"
     publishDir "${params.outdir}/bcftools", mode: 'copy'
 
-    cpus params.bcftools_threads
-    memory params.bcftools_mem
-    time params.bcftools_time
-
     input:
     path bams
     path bais

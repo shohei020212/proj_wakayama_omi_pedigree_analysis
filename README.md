@@ -2,17 +2,17 @@
 
 A reproducible SNP calling, filtering and pedigree recontruction pipeline using Nextflow and Docker.
 
-## Overview
+##　🌏 Overview
 This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-to-end (QC → mapping → variant calling → filtering → QC → pedigree reconstruction → summary) in a reproducible manner. The pipeline is designed to run locally by switching Nextflow configuration profiles.
 
-## Key features
+##　🔑 Key features
 - Workflow automation with Nextflow (restartable runs, scalable execution via profiles).
 - Containerized execution with Docker to keep tool dependencies consistent across environments.
 - Batch processing via a simple samplesheet (CSV).
 
 ---
 
-## Requirements
+## 🛠 Prerequisites
 - Nextflow
 - Docker
 - Java (version 17 or later)
@@ -21,7 +21,7 @@ This repository provides a Nextflow (DSL2) pipeline to perform SNP analysis end-
 
 ---
 
-## Quick start
+## 🚀 Quick start
 
 ### 1. Clone
 
@@ -54,11 +54,13 @@ nextflow run main.nf \
     --outdir results \
     --trim_adapters resources/adapters.fa \
     --regions resources/target_regions.bed \
-    --known_sites resources/target_snplist.tsv
+    --known_sites resources/target_snplist.tsv \
+    --lh_file resources/LH_Data.txt
 ```
 
-## Pipeline steps
+## ⚙️ Pipeline steps
 
+- FASTQ validation (Ubuntu)
 - Read QC (FastQC / MultiQC)
 - Adapter trimming (Trimmomatic)
 - Alignment to reference (BWA-MEM)
@@ -66,7 +68,7 @@ nextflow run main.nf \
 - Variant calling (bcftools or GATK)
 - Variant filtering (VCFtools)
 
-## Summary statistics / reports
+## 📊 Summary statistics / reports
 
 ### Inputs
 Minimum required:  
@@ -79,7 +81,7 @@ Optional:
 ```--caller```: Variant caller (defauls: bcftools, option: gatk and freebayes).  
 ```--regions```: Target region list (BED format: chr/start/end).   
 ```--known_sites```: Known variant sites (TSV; chr/pos).   
-```--lh_file```: Life-history data(ID, Sex, BirthYear, BY.min, BY.max, Year.last).  
+```--lh_file```: Life-history data (ID, Sex, BirthYear, BY.min, BY.max, Year.last).  
 
 ### Outputs
 All outputs are written under `--outdir` (default: `results/`).  

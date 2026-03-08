@@ -6,10 +6,6 @@ process FREEBAYES {
     tag "freebayes_joint_call"
     publishDir "${params.outdir}/freebayes", mode: 'copy'
 
-    cpus params.freebayes_threads
-    memory params.freebayes_mem
-    time params.freebayes_time
-
     input:
     path bams
     path bais

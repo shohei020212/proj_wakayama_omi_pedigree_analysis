@@ -4,13 +4,13 @@
 nextflow.enable.dsl = 2
 
 // Module include statements
+include { VALIDATE_FASTQ          } from './modules/validate_fastq'
 include { FASTQC as FASTQC_RAW    } from './modules/fastqc'
 include { FASTQC as FASTQC_TRIM   } from './modules/fastqc'
 include { TRIMMOMATIC             } from './modules/trimmomatic'
 include { MULTIQC                 } from './modules/multiqc'
 include { BWA_INDEX               } from './modules/bwa_index'
-include { BWA                     } from './modules/bwa'
-include { SAMTOOLS_VIEW_SORT      } from './modules/samtools'
+include { BWA_SAMTOOLS            } from './modules/bwa_samtools.nf'
 include { MULTIQC_FLAGSTAT        } from './modules/multiqc_flagstat'
 
 // Variant calling modules
@@ -45,15 +45,18 @@ workflow {
     channel.value(file(ref_fasta)).set { ch_ref }
 
     // Temporary diagnostics
-    ch_reads.view()
-    ch_ref.view()
+    // ch_reads.view()
+    // ch_ref.view()
+
+    // 0) Validate FASTQ files for R1/R2 consistency
+    VALIDATE_FASTQ(ch_reads)
 
     // 1) raw FastQC before trimming
-    FASTQC_RAW(ch_reads)
+    FASTQC_RAW(VALIDATE_FASTQ.out.validated_reads)
     
     // 2) Trimming with Trimmomatic
     ch_adapters = channel.value(adapter)
-    TRIMMOMATIC(ch_reads, ch_adapters)
+    TRIMMOMATIC(VALIDATE_FASTQ.out.validated_reads, ch_adapters)
     
     // 3) trimmed FastQC with Trimmomatic output
     FASTQC_TRIM(TRIMMOMATIC.out.reads)
@@ -69,27 +72,24 @@ workflow {
 
     // 4) Alignment with BWA-MEM
     BWA_INDEX(ch_ref)
-    BWA(TRIMMOMATIC.out.reads, BWA_INDEX.out.ref_and_index)
-
-    // 5) SAM to sorted BAM with SAMTOOLS
-    SAMTOOLS_VIEW_SORT(BWA.out.sam)
+    BWA_SAMTOOLS(TRIMMOMATIC.out.reads, BWA_INDEX.out.ref_and_index)
     
-    // 6) Summarize flagstats with MultiQC
-    ch_flagstats =  SAMTOOLS_VIEW_SORT.out.flagstats_filtered
-        .mix(SAMTOOLS_VIEW_SORT.out.flagstats_unfiltered)
+    // 5) Summarize flagstats with MultiQC
+    ch_flagstats =  BWA_SAMTOOLS.out.flagstats_filtered
+        .mix(BWA_SAMTOOLS.out.flagstats_unfiltered)
         .map { _sample, txt -> txt }
         .collect()
     
     MULTIQC_FLAGSTAT(ch_flagstats)
 
-    // 7) Variant calling
+    // 6) Variant calling
     // Define channels for vcf output
     vcf_ch = channel.empty()
     // Collect BAM and BAI files
-    ch_bam_list =  SAMTOOLS_VIEW_SORT.out.bam
+    ch_bam_list =  BWA_SAMTOOLS.out.bam
         .map { _sample, bam -> bam }
         .collect()
-    ch_bai_list =  SAMTOOLS_VIEW_SORT.out.bai
+    ch_bai_list =  BWA_SAMTOOLS.out.bai
         .map { _sample, bai -> bai }
         .collect()
 
@@ -125,16 +125,16 @@ workflow {
     
     }
 
-    // 8) VCF filtering and QC metrics with VCFTOOLS
+    // 7) VCF filtering and QC metrics with VCFTOOLS
     //    Optional known_sites file
     ch_knownsites = channel.value( file(params.known_sites, checkIfExists: true) )
     VCFTOOLS_FILTER_QC(vcf_ch, ch_knownsites)
 
-    // 9) Extract AD and GT from filtered VCF and plot AD scatter
+    // 8) Extract AD and GT from filtered VCF and plot AD scatter
     EXTRACT_AD_GT(VCFTOOLS_FILTER_QC.out.filtered_vcf)
     PLOT_AD_SCATTER(EXTRACT_AD_GT.out.ad_gt_tsv)
 
-    // 10) Pedigree analysis with SEQUOIA
+    // 9) Pedigree analysis with SEQUOIA
     ch_lhfile = channel.value( file(params.lh_file, checkIfExists: true) )
     SEQUOIA(VCFTOOLS_FILTER_QC.out.filtered_vcf, ch_lhfile)
 }

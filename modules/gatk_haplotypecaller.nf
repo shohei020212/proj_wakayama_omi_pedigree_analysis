@@ -6,10 +6,6 @@ process GATK_HC {
     tag "gatk_haplotype_caller"
     publishDir "${params.outdir}/gatk", mode: 'copy'
 
-    cpus params.gatk_threads
-    memory params.gatk_mem
-    time params.gatk_time
-
     input:
     path bams
     path bais

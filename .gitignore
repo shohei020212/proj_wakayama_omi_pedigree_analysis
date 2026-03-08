@@ -1,5 +1,10 @@
 data/
-resources/
+resources/reference.fa
+resources/reference.fa.fai
+resources/samplesheet.csv
+resources/target_regions.bed
+resources/target_snplist.tsv
+resources/LH_Data.txt
 results/
 work/
 .nextflow/
