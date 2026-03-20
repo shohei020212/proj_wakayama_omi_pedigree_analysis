@@ -4,7 +4,7 @@
 nextflow.enable.dsl = 2
 
 // Module include statements
-include { VALIDATE_FASTQ          } from './modules/validate_fastq'
+include { REPAIR_FASTQ          } from './modules/repair_fastq.nf'
 include { FASTQC as FASTQC_RAW    } from './modules/fastqc'
 include { FASTQC as FASTQC_TRIM   } from './modules/fastqc'
 include { TRIMMOMATIC             } from './modules/trimmomatic'
@@ -49,14 +49,14 @@ workflow {
     // ch_ref.view()
 
     // 0) Validate FASTQ files for R1/R2 consistency
-    VALIDATE_FASTQ(ch_reads)
+    REPAIR_FASTQ(ch_reads)
 
     // 1) raw FastQC before trimming
-    FASTQC_RAW(VALIDATE_FASTQ.out.validated_reads)
+    FASTQC_RAW(REPAIR_FASTQ.out.repaired_reads)
     
     // 2) Trimming with Trimmomatic
     ch_adapters = channel.value(adapter)
-    TRIMMOMATIC(VALIDATE_FASTQ.out.validated_reads, ch_adapters)
+    TRIMMOMATIC(REPAIR_FASTQ.out.repaired_reads, ch_adapters)
     
     // 3) trimmed FastQC with Trimmomatic output
     FASTQC_TRIM(TRIMMOMATIC.out.reads)

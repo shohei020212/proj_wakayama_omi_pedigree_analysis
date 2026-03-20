@@ -1,4 +1,5 @@
 data/
+tmp/
 resources/reference.fa
 resources/reference.fa.fai
 resources/samplesheet.csv

@@ -49,7 +49,7 @@ Create samplesheet.csv:
 nextflow run main.nf \
     -profile docker \
     -params-file params.yaml \
-    --input samplesheet.csv \
+    --input resources/samplesheet.csv \
     --fasta resources/reference.fa \
     --outdir results \
     --trim_adapters resources/adapters.fa \
@@ -60,7 +60,7 @@ nextflow run main.nf \
 
 ## ⚙️ Pipeline steps
 
-- FASTQ validation (Ubuntu)
+- Repair FASTQ files (BBMap)
 - Read QC (FastQC / MultiQC)
 - Adapter trimming (Trimmomatic)
 - Alignment to reference (BWA-MEM)
