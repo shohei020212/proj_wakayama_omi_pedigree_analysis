@@ -14,6 +14,10 @@ process REPAIR_FASTQ {
 
     script:
     """
+    # Download BBMap repair script
+    wget https://github.com/BioInfoTools/BBMap/blob/master/sh/repair.sh
+    chmod +x repair.sh
+    
     # Fix files of paired reads that became disordered using BBMap
     repair.sh \
         in1=${r1} \
