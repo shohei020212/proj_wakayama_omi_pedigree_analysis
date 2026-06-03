@@ -5,6 +5,7 @@ nextflow.enable.dsl = 2
 process SEQUOIA {
     // Save results to the specified output directory
     publishDir "${params.outdir}/sequoia", mode: 'copy'
+    time = '24h'
     
     // Tag the process for easier monitoring
     tag "Running Sequoia on ${vcf_file.simpleName}"

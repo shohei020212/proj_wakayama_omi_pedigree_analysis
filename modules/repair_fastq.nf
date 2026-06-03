@@ -4,7 +4,9 @@ nextflow.enable.dsl = 2
 
 process REPAIR_FASTQ {
     tag "$sample"
-    errorStrategy 'ignore' // Continue with other samples even if one fails
+    time   = { 1.m * task.attempt }
+    cpus   = 2
+    errorStrategy 'ignore'
 
     input:
     tuple val(sample), path(r1), path(r2)
@@ -26,5 +28,7 @@ process REPAIR_FASTQ {
         out2=${sample}_fixed.2.fastq.gz \
         outs=${sample}_singletons.fastq.gz \
         repair
+
+    rm repair.sh
     """
 }

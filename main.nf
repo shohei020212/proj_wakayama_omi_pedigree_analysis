@@ -93,8 +93,8 @@ workflow {
         .map { _sample, bai -> bai }
         .collect()
 
-    ch_bam_list.view()
-    ch_bai_list.view()
+    // ch_bam_list.view()
+    // ch_bai_list.view()
     
     // Variant calling step selection based on params.caller
     if (params.caller == 'bcftools') {
@@ -106,18 +106,18 @@ workflow {
         
     } else if (params.caller == 'gatk') {
         
+        // Optional regions BED file
+        ch_regions = channel.value( file(params.regions, checkIfExists: true) )
         // Variant calling with GATK HaplotypeCaller
-        vcf_ch = GATK_HC(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
-    
-    } else if (params.caller == 'gatk') {
-        
-        // Variant calling with GATK HaplotypeCaller
-        vcf_ch = GATK_HC(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
+        vcf_ch = GATK_HC(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index, ch_regions).vcf_gz
+
     
     } else if (params.caller == 'freebayes') {
-        
+
+        // Optional regions BED file
+        ch_regions = channel.value( file(params.regions, checkIfExists: true) )
         // Variant calling with FREEBAYES
-        vcf_ch = FREEBAYES(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index).vcf_gz
+        vcf_ch = FREEBAYES(ch_bam_list, ch_bai_list, BWA_INDEX.out.ref_and_index, ch_regions).vcf_gz
     
     } else {
 

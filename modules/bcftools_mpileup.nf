@@ -5,6 +5,7 @@ nextflow.enable.dsl = 2
 process BCFTOOLS_MPILEUP {
     tag "bcftools_joint_call"
     publishDir "${params.outdir}/bcftools", mode: 'copy'
+    time = '24h'
 
     input:
     path bams

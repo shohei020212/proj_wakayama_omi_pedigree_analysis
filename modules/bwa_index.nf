@@ -5,6 +5,8 @@ nextflow.enable.dsl = 2
 process BWA_INDEX {
   tag "bwa_index"
   publishDir "${params.outdir}/bwa_index", mode: 'copy'
+  time = '24h'
+  cpus   = 2
 
   input:
   path ref_fasta
