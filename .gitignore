@@ -1,7 +1,5 @@
 data/
 tmp/
-resources/reference.fa
-resources/reference.fa.fai
 results/
 work/
 .nextflow/
